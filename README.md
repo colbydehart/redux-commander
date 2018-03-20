@@ -1,16 +1,13 @@
 # redux-commander
 
-[![Travis][build-badge]][build]
 [![npm package][npm-badge]][npm]
-[![Coveralls][coveralls-badge]][coveralls]
 
-Describe redux-commander here.
+> Simple, declarative side effect bindings for Redux
 
-[build-badge]: https://img.shields.io/travis/user/repo/master.png?style=flat-square
-[build]: https://travis-ci.org/user/repo
+Redux Commander tries to alleviate the headache of trying to manage side effects
+and async actions in redux by using a simple and declarative syntax. There is
+not much to learn after you get it set up and it makes your async actions easy
+to test and think about.
 
-[npm-badge]: https://img.shields.io/npm/v/npm-package.png?style=flat-square
-[npm]: https://www.npmjs.org/package/npm-package
-
-[coveralls-badge]: https://img.shields.io/coveralls/user/repo/master.png?style=flat-square
-[coveralls]: https://coveralls.io/github/user/repo
+[npm-badge]: https://img.shields.io/npm/v/redux-commander.png?style=flat-square
+[npm]: https://www.npmjs.org/package/redux-commander
