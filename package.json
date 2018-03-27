@@ -7,9 +7,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "npm run build:clean && npm run build:lib",
+    "build": "npm run build:clean && npm run build:lib && npm run build:flow",
     "build:lib": "babel -s inline -d dist src/",
     "build:clean": "rimraf dist",
+    "build:flow": "cp src/index.js.flow dist/index.js.flow",
     "test": "jest"
   },
   "dependencies": {},
@@ -27,7 +28,7 @@
   "author": "",
   "homepage": "",
   "license": "MIT",
-  "repository": "",
+  "repository": "https://github.com/colbydehart/redux-commander",
   "peerDependencies": {
     "redux": "^3.7.2"
   }
