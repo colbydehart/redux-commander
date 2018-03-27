@@ -1,6 +1,6 @@
 {
   "name": "redux-commander",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Simple, Declarative side effect bindings for redux",
   "main": "dist/index.js",
   "files": [
