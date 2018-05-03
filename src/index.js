@@ -24,13 +24,17 @@ const resolveCmdReducer = (
   // for each command, if it is a function, call the function with the arguments
   // and then if it is an action (meaning it has a `.type` key on it), dispatch
   // it after the promise resolves.
-  commands.forEach(([cmd, ...args]) => {
-    if (typeof cmd === 'function') {
-      Promise.resolve(cmd(...args)).then(a => a && a.type && store.dispatch(a));
-    }
+  new Promise(() => {
+    commands.forEach(([cmd, ...args]) => {
+      if (typeof cmd === 'function') {
+        Promise.resolve(cmd(...args)).then(
+          a => a && a.type && store.dispatch(a)
+        );
+      }
+    });
+    // Finally return the new state.
+    return newState;
   });
-  // Finally return the new state.
-  return newState;
 };
 
 /** This is the command reducers reducer, which let us handle

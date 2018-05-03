@@ -3,9 +3,7 @@
   "version": "0.0.5",
   "description": "Simple, Declarative side effect bindings for redux",
   "main": "dist/index.js",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "npm run build:clean && npm run build:lib && npm run build:flow",
     "build:lib": "babel -s inline -d dist src/",
@@ -22,6 +20,7 @@
     "babel-preset-env": "^1.6.1",
     "flow-bin": "^0.66.0",
     "jest": "^22.4.2",
+    "redux": "^4.0.0",
     "regenerator-runtime": "^0.11.1",
     "rimraf": "^2.6.2"
   },
@@ -30,6 +29,6 @@
   "license": "MIT",
   "repository": "https://github.com/colbydehart/redux-commander",
   "peerDependencies": {
-    "redux": "^3.7.2"
+    "redux": "^4.0.0"
   }
 }
