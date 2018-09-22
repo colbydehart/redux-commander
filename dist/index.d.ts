@@ -1,7 +1,7 @@
 import { Action, Store, Reducer } from "redux";
 
-export type Command<A extends Action> = [
-  (...args: any[]) => A | null,
+export type Command<A extends Action = any> = [
+  (...args: any[]) => A | Promise<A> | null,
   ...any[]
 ];
 
