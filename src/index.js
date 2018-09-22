@@ -1,19 +1,10 @@
-// @flow
-
-import type { Store, Reducer } from 'redux';
-
 /**
  * This function will take in a reducer, state, action, and
  * store and dispatch any async commands (if any) and return
  * the next state. Used as a helper function in the public
  * methods reduceCommandReducers and combineCommandReducers.
  */
-const resolveCmdReducer = (
-  reducer: Reducer<*, *>,
-  state: any,
-  action: any,
-  store: Store<*, *>
-) => {
+const resolveCmdReducer = (reducer, state, action, store) => {
   const next = reducer(state, action);
   // If we just get back the state, return it. No commands to execute.
   if (!Array.isArray(next)) {
@@ -26,7 +17,7 @@ const resolveCmdReducer = (
   // it after the promise resolves.
   new Promise(() => {
     commands.forEach(([cmd, ...args]) => {
-      if (typeof cmd === 'function') {
+      if (typeof cmd === "function") {
         Promise.resolve(cmd(...args)).then(
           a => a && a.type && store.dispatch(a)
         );
@@ -67,11 +58,8 @@ const resolveCmdReducer = (
  * and the asynchronous functions to be called and then dispatched
  * if they resolve to an action.
  */
-export const reduceCommandReducers = (
-  store: Store<*, *>,
-  reducers: Reducer<*, *>[]
-) => {
-  return (state: any, action: any) =>
+export const reduceCommandReducers = (store, reducers) => {
+  return (state, action) =>
     reducers.reduce(
       (next, reducer) => resolveCmdReducer(reducer, next, action, store),
       state
@@ -84,11 +72,8 @@ export const reduceCommandReducers = (
  * where each key in an object is a reducer instead
  * of reducing an array of reducers
  */
-export const combineCommandReducers = (
-  store: Store<*, *>,
-  reducers: { [key: string]: Reducer<*, *> }
-) => {
-  return (state: any, action: any) => {
+export const combineCommandReducers = (store, reducers) => {
+  return (state, action) => {
     const reducerKeys = Object.keys(reducers);
     const nextState = {};
 
