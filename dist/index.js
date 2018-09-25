@@ -18,7 +18,11 @@ function resolveCmdReducer(reducer, state, action, store) {
     // and then if it is an action (meaning it has a `.type` key on it), dispatch
     // it after the promise resolves.
     new Promise(() => {
-        commands.forEach(([cmd, ...args]) => {
+        commands.forEach(arr => {
+            if (!arr) {
+                return;
+            }
+            const [cmd, ...args] = arr;
             if (typeof cmd === "function") {
                 const promiseOrAction = cmd(...args);
                 !!promiseOrAction &&

@@ -72,7 +72,19 @@ case 'requestPosts':
 ```
 
 If this function returns an action or a Promise that resolves to an action, it
-will be dispatched. There is no complex api to learn, you just return an array
+will be dispatched. You can also just pass `null` instead of a Command to
+conditionally dispatch an action.
+
+```
+return [
+  state,
+  makeApiCall ? [Api.getThing, 1] : null // if makeApiCall is false, no command
+                                         // will be triggered.
+]
+```
+
+
+There is no complex api to learn, you just return an array
 when you want a side effect.  It's easier to see with the example:
 
 ## Example
