@@ -1,10 +1,32 @@
+import { Action, AnyAction, Store, Reducer } from "redux";
+
+export type Command<A extends Action = AnyAction> = [
+  (...args: any[]) => A | Promise<A> | null,
+  ...any[]
+];
+
+export type CommandReducer<S = any, A extends Action = AnyAction> = (
+  state: S | undefined,
+  action: A
+) => S | [S, ...Command<A>[]];
+
+export type CommandReducersMapObject<
+  S = any,
+  A extends Action<any> = AnyAction
+> = { [K in keyof S]: CommandReducer<S[K], A> };
+
 /**
  * This function will take in a reducer, state, action, and
  * store and dispatch any async commands (if any) and return
  * the next state. Used as a helper function in the public
  * methods reduceCommandReducers and combineCommandReducers.
  */
-const resolveCmdReducer = (reducer, state, action, store) => {
+function resolveCmdReducer<S = any, A extends Action<any> = AnyAction>(
+  reducer: CommandReducer<S, A>,
+  state: S | undefined,
+  action: A,
+  store: Store<S, A>
+): S {
   const next = reducer(state, action);
   // If we just get back the state, return it. No commands to execute.
   if (!Array.isArray(next)) {
@@ -18,15 +40,17 @@ const resolveCmdReducer = (reducer, state, action, store) => {
   new Promise(() => {
     commands.forEach(([cmd, ...args]) => {
       if (typeof cmd === "function") {
-        Promise.resolve(cmd(...args)).then(
-          a => a && a.type && store.dispatch(a)
-        );
+        const promiseOrAction = cmd(...args);
+        !!promiseOrAction &&
+          Promise.resolve(promiseOrAction).then(
+            a => !!a && a.type && store.dispatch(a)
+          );
       }
     });
-    // Finally return the new state.
-    return newState;
   });
-};
+  // Finally return the new state.
+  return newState;
+}
 
 /** This is the command reducers reducer, which let us handle
  * async side effects in Redux. In your reducers, instead
@@ -58,13 +82,19 @@ const resolveCmdReducer = (reducer, state, action, store) => {
  * and the asynchronous functions to be called and then dispatched
  * if they resolve to an action.
  */
-export const reduceCommandReducers = (store, reducers) => {
-  return (state, action) =>
-    reducers.reduce(
+export function reduceCommandReducers<
+  S = any,
+  A extends Action<any> = AnyAction
+>(store: Store<S, A>, reducers: CommandReducer<S, A>[]): Reducer<S, A> {
+  const [first, ...rest] = reducers;
+  return (state: S | undefined, action: A) => {
+    const init: S = resolveCmdReducer(first, state, action, store);
+    return rest.reduce<S>(
       (next, reducer) => resolveCmdReducer(reducer, next, action, store),
-      state
+      init
     );
-};
+  };
+}
 
 /** This is the command reducers combiner. It works
  * the same way as the reduceCommandReducers function,
@@ -72,18 +102,21 @@ export const reduceCommandReducers = (store, reducers) => {
  * where each key in an object is a reducer instead
  * of reducing an array of reducers
  */
-export const combineCommandReducers = (store, reducers) => {
-  return (state, action) => {
+
+export function combineCommandReducers<
+  S = any,
+  A extends Action<any> = AnyAction
+>(store: Store<S, A>, reducers: CommandReducersMapObject<S, A>): Reducer<S, A> {
+  return (state: S | undefined, action: A) => {
     const reducerKeys = Object.keys(reducers);
     const nextState = {};
-
     for (let i = 0; i < reducerKeys.length; i++) {
       const key = reducerKeys[i];
       const reducer = reducers[key];
-      const prev = state[key];
+      const prev = state && state[key];
       const next = resolveCmdReducer(reducer, prev, action, store);
       nextState[key] = next;
     }
-    return nextState;
+    return nextState as S;
   };
-};
+}
