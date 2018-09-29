@@ -1,5 +1,5 @@
 import { Action, AnyAction, Store, Reducer } from "redux";
-export declare type Command<A extends Action = AnyAction> = [(...args: any[]) => A | Promise<A> | null | Promise<null>, ...any[]];
+export declare type Command<A extends Action = AnyAction> = [(...args: any[]) => A | null | void | undefined | Promise<A | null | void | undefined>, ...any[]];
 export declare type CommandReducer<S = any, A extends Action = AnyAction> = (state: S | undefined, action: A) => S | [S, ...(Command<A> | null)[]];
 export declare type CommandReducersMapObject<S = any, A extends Action<any> = AnyAction> = {
     [K in keyof S]: CommandReducer<S[K], A>;

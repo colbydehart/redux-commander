@@ -1,7 +1,9 @@
 import { Action, AnyAction, Store, Reducer } from "redux";
 
 export type Command<A extends Action = AnyAction> = [
-  (...args: any[]) => A | Promise<A> | null | Promise<null>,
+  (
+    ...args: any[]
+  ) => A | null | void | undefined | Promise<A | null | void | undefined>,
   ...any[]
 ];
 
