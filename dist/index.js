@@ -7,26 +7,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * methods reduceCommandReducers and combineCommandReducers.
  */
 function resolveCmdReducer(reducer, state, action, store) {
-    const next = reducer(state, action);
+    var next = reducer(state, action);
     // If we just get back the state, return it. No commands to execute.
     if (!Array.isArray(next)) {
         return next;
     }
     // Otherwise get the newState and the array of commands to execute.
-    const [newState, ...commands] = next;
+    var newState = next[0], commands = next.slice(1);
     // for each command, if it is a function, call the function with the arguments
     // and then if it is an action (meaning it has a `.type` key on it), dispatch
     // it after the promise resolves.
-    new Promise(() => {
-        commands.forEach(arr => {
+    new Promise(function () {
+        commands.forEach(function (arr) {
             if (!arr) {
                 return;
             }
-            const [cmd, ...args] = arr;
+            var cmd = arr[0], args = arr.slice(1);
             if (typeof cmd === "function") {
-                const promiseOrAction = cmd(...args);
+                var promiseOrAction = cmd.apply(void 0, args);
                 !!promiseOrAction &&
-                    Promise.resolve(promiseOrAction).then(a => !!a && a.type && store.dispatch(a));
+                    Promise.resolve(promiseOrAction).then(function (a) { return !!a && a.type && store.dispatch(a); });
             }
         });
     });
@@ -64,10 +64,10 @@ function resolveCmdReducer(reducer, state, action, store) {
  * if they resolve to an action.
  */
 function reduceCommandReducers(store, reducers) {
-    const [first, ...rest] = reducers;
-    return (state, action) => {
-        const init = resolveCmdReducer(first, state, action, store);
-        return rest.reduce((next, reducer) => resolveCmdReducer(reducer, next, action, store), init);
+    var first = reducers[0], rest = reducers.slice(1);
+    return function (state, action) {
+        var init = resolveCmdReducer(first, state, action, store);
+        return rest.reduce(function (next, reducer) { return resolveCmdReducer(reducer, next, action, store); }, init);
     };
 }
 exports.reduceCommandReducers = reduceCommandReducers;
@@ -78,14 +78,14 @@ exports.reduceCommandReducers = reduceCommandReducers;
  * of reducing an array of reducers
  */
 function combineCommandReducers(store, reducers) {
-    return (state, action) => {
-        const reducerKeys = Object.keys(reducers);
-        const nextState = {};
-        for (let i = 0; i < reducerKeys.length; i++) {
-            const key = reducerKeys[i];
-            const reducer = reducers[key];
-            const prev = state && state[key];
-            const next = resolveCmdReducer(reducer, prev, action, store);
+    return function (state, action) {
+        var reducerKeys = Object.keys(reducers);
+        var nextState = {};
+        for (var i = 0; i < reducerKeys.length; i++) {
+            var key = reducerKeys[i];
+            var reducer = reducers[key];
+            var prev = state && state[key];
+            var next = resolveCmdReducer(reducer, prev, action, store);
             nextState[key] = next;
         }
         return nextState;

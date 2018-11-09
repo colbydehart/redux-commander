@@ -1,13 +1,8 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ES5",
     "module": "commonjs",
-    "lib": [
-      "dom",
-      "es2015",
-      "es2016",
-      "es2017"
-    ],
+    "lib": ["dom", "es2015", "es2016", "es2017"],
     "declaration": true,
     "outDir": "./dist",
     "rootDir": "./src",
@@ -23,7 +18,7 @@
     "noImplicitReturns": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/*.test.ts", "**/*.test.tsx"]
